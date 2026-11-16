@@ -1,5 +1,6 @@
 package com.example.gilded_rose_backend.controller;
 
+import com.example.gilded_rose_backend.exception.GlobalExceptionHandler;
 import com.example.gilded_rose_backend.service.InventoryService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +20,9 @@ public class InventoryControllerTest {
         InventoryService service = new InventoryService();
         InventoryController controller = new InventoryController(service);
 
-        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(controller)
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
     }
 
     @Test
@@ -41,5 +44,24 @@ public class InventoryControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].sellIn").value(4))
                 .andExpect(jsonPath("$[0].quality").value(9));
+    }
+
+    @Test
+    public void shouldReturnBadRequestForBlankItemName() throws Exception {
+        String json = """
+                [
+                    {
+                        "name": "",
+                        "sellIn": 5,
+                        "quality": 10
+                    }
+                ]
+                """;
+        mockMvc.perform(post("/api/inventory/update")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.detail")
+                        .value("Item name must not be blank"));
     }
 }
