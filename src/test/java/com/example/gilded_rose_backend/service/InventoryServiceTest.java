@@ -1,5 +1,6 @@
 package com.example.gilded_rose_backend.service;
 
+import com.example.gilded_rose_backend.exception.InvalidInventoryException;
 import com.example.gilded_rose_backend.model.Item;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -7,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class InventoryServiceTest {
     private InventoryService service;
@@ -17,7 +19,7 @@ public class InventoryServiceTest {
     }
 
     @Test
-    public void normalItemShouldDecreaseQualityByOne(){
+    public void normalItemShouldDecreaseQualityByOne() {
         Item normalItem = new Item("Normal Item", 5, 10);
 
         Item result = service.updateItem(normalItem);
@@ -27,7 +29,7 @@ public class InventoryServiceTest {
     }
 
     @Test
-    public void expiredNormalItemsShouldDecreaseQualityByTwo(){
+    public void expiredNormalItemsShouldDecreaseQualityByTwo() {
         Item normalItem = new Item("Normal Item", -1, 10);
 
         Item result = service.updateItem(normalItem);
@@ -37,7 +39,7 @@ public class InventoryServiceTest {
     }
 
     @Test
-    public void qualityShouldRemainZeroIfItsZeroPriorTheUpdate(){
+    public void qualityShouldRemainZeroIfItsZeroPriorTheUpdate() {
         Item normalItem = new Item("Normal Item", 3, 0);
 
         Item result = service.updateItem(normalItem);
@@ -118,7 +120,7 @@ public class InventoryServiceTest {
     }
 
     @Test
-    public void conjuredItemWithZeroSellInShouldDegradeByFour(){
+    public void conjuredItemWithZeroSellInShouldDegradeByFour() {
         Item conjured = new Item("Conjured", 0, 10);
 
         Item result = service.updateItem(conjured);
@@ -138,7 +140,7 @@ public class InventoryServiceTest {
     }
 
     @Test
-    public void backstagePassesShouldIncreaseQualityByOneWhenMoreThanTenDaysRemain(){
+    public void backstagePassesShouldIncreaseQualityByOneWhenMoreThanTenDaysRemain() {
         Item backstagePasses = new Item("Backstage passes", 15, 10);
 
         Item result = service.updateItem(backstagePasses);
@@ -153,7 +155,7 @@ public class InventoryServiceTest {
 
         Item result = service.updateItem(backstagePasses);
 
-        assertEquals(-2, result.sellIn() );
+        assertEquals(-2, result.sellIn());
         assertEquals(0, result.quality());
     }
 
@@ -188,7 +190,7 @@ public class InventoryServiceTest {
     }
 
     @Test
-    public void backstagePassesShouldIncreaseQualityByTwoWhenTenDaysRemain(){
+    public void backstagePassesShouldIncreaseQualityByTwoWhenTenDaysRemain() {
         Item backstagePasses = new Item("Backstage passes", 10, 10);
 
         Item result = service.updateItem(backstagePasses);
@@ -198,7 +200,7 @@ public class InventoryServiceTest {
     }
 
     @Test
-    public void shouldUpdateEntireInventory(){
+    public void shouldUpdateEntireInventory() {
         List<Item> items = List.of(
                 new Item("Normal Item", 5, 10),
                 new Item("Aged Brie", 3, 20),
@@ -224,5 +226,20 @@ public class InventoryServiceTest {
         List<Item> updatedList = service.updateInventory(List.of());
 
         assertEquals(List.of(), updatedList);
+    }
+
+    @Test
+    public void shouldRejectItemWithNullName() {
+        Item item = new Item(null, 5, 10);
+
+        InvalidInventoryException exception = assertThrows(
+                InvalidInventoryException.class,
+                () -> service.updateItem(item)
+        );
+
+        assertEquals(
+                "Item name must not be blank",
+                exception.getMessage()
+        );
     }
 }
