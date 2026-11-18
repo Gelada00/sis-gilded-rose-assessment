@@ -24,29 +24,30 @@ public class InventoryService {
             throw new InvalidInventoryException("Item quality must not be negative");
         }
 
-        if (item.name().equals("Sulfuras")) {
-            return new Item(item.name(), item.sellIn(), 80);
-        }
+        ItemType type = ItemTypeResolver.resolve(item.name());
 
         boolean expired = item.sellIn() <= 0;
 
-        int newQuality = switch (item.name()) {
+        return switch (type) {
+            case SULFURAS -> new Item(item.name(), item.sellIn(), 80);
 
-            case "Aged Brie" -> item.quality() + (expired ? 2 : 1);
+            case AGED_BRIE -> nextDay(item,item.quality() + (expired ? 2 : 1));
 
-            case "Conjured" -> item.quality() - (expired ? 4 : 2);
+            case CONJURED -> nextDay(item, item.quality() - (expired ? 4 : 2));
 
-            case "Backstage passes" -> calculateBackstageQuality(item);
+            case BACKSTAGE_PASSES -> nextDay(item, calculateBackstageQuality(item));
 
-            default -> item.quality() - (expired ? 2 : 1);
+            case NORMAL -> nextDay(item, item.quality() - (expired ? 2 : 1));
         };
+    }
 
-        newQuality = Math.max(0, Math.min(50, newQuality));
+    private Item nextDay(Item item, int newQuality) {
+        int boundaryForQuality = Math.max(0, Math.min(50, newQuality));
 
         return new Item(
                 item.name(),
                 item.sellIn() - 1,
-                newQuality
+                boundaryForQuality
         );
     }
 
@@ -73,7 +74,7 @@ public class InventoryService {
         }
         log.info("Starting inventory update for {} items", items.size());
 
-        List<Item> updatedItems =  items.stream().map(item -> updateItem(item))
+        List<Item> updatedItems = items.stream().map(item -> updateItem(item))
                 .toList();
 
         log.info("Inventory updated successfully");
