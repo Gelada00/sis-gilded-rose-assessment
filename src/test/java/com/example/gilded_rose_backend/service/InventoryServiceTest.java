@@ -270,7 +270,22 @@ public class InventoryServiceTest {
         List<Item> actualList = service.updateInventory(items);
 
         assertEquals(expectedList, actualList);
+    }
 
+    @Test
+    public void shouldRejectNegativeQuality() {
+        Item item = new Item("Normal Item", 5, -1);
 
+        assertThrows(InvalidInventoryException.class, () -> service.updateItem(item));
+    }
+
+    @Test
+    public void shouldSetSulfurasQualityTo80(){
+        Item item = new Item("Sulfuras", 0, 10);
+
+        Item result = service.updateItem(item);
+
+        assertEquals(80, result.quality());
+        assertEquals(0, result.sellIn());
     }
 }
