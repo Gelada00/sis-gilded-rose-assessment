@@ -34,7 +34,7 @@ The application implements the Gilded Rose inventory rules and allows users to m
 
 Ensure the following are installed:
 
-- Java JDK 17 or later, compatible with the version configured in `pom.xml`
+- Java JDK 21, compatible with the version configured in `pom.xml`
 - Node.js and npm
 - Git
 
