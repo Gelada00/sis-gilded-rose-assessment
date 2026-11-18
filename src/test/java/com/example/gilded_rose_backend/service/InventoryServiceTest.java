@@ -242,4 +242,35 @@ public class InventoryServiceTest {
                 exception.getMessage()
         );
     }
+
+    @Test
+    public void shouldUpdateInventoryUsingSisAssessmentExample() {
+        List<Item> items = List.of(
+                new Item("Aged Brie", 1, 1),
+                new Item("Backstage passes", -1, 2),
+                new Item("Backstage passes", 9, 2),
+                new Item("Sulfuras", 0, 80),
+                new Item("Normal Item", -1, 55),
+                new Item("Normal Item", 2, 2),
+                new Item("Conjured", 2, 2),
+                new Item("Conjured", -1, 5)
+        );
+
+        List<Item> expectedList = List.of(
+                new Item("Aged Brie", 0, 2),
+                new Item("Backstage passes", -2, 0),
+                new Item("Backstage passes", 8, 4),
+                new Item("Sulfuras", 0, 80),
+                new Item("Normal Item", -2, 50),
+                new Item("Normal Item", 1, 1),
+                new Item("Conjured", 1, 0),
+                new Item("Conjured", -2, 1)
+        );
+
+        List<Item> actualList = service.updateInventory(items);
+
+        assertEquals(expectedList, actualList);
+
+
+    }
 }
