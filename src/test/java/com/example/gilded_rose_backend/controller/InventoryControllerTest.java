@@ -64,4 +64,24 @@ public class InventoryControllerTest {
                 .andExpect(jsonPath("$.detail")
                         .value("Item name must not be blank"));
     }
+
+    @Test
+    public void shouldReturnBadRequestForNegativeQuality() throws Exception {
+        String json = """
+                [
+                    {
+                        "name": "Normal Item",
+                        "sellIn": 5,
+                        "quality": -1
+                    }
+                ]
+                """;
+        mockMvc.perform(post("/api/inventory/update")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.detail")
+                        .value("Item quality must not be negative"));
+    }
 }
