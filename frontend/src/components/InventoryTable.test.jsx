@@ -2,7 +2,7 @@
  * @vitest-environment jsdom
  */
 
-import { test, expect } from 'vitest';
+import { test, expect, TestRunner } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import InventoryTable from './InventoryTable';
 
