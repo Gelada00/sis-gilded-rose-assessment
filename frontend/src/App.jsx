@@ -40,22 +40,41 @@ function App() {
   };
 
   return  (   
-    <div>
-      <h1> Gilded Rose Inventory </h1>
+    <main className='app'>
+      <header className='app-header'>
+        <p className='eyebrow'>Inventory Management</p>
+        <h1> Gilded Rose Inventory </h1>
+        <p className='app-description'>
+          Manage your inventory and update item quality each day.
+        </p>
+      </header>
 
-      <InventoryTable items={items} />
-      <button
-       type="button" 
-       onClick={advanceDay}
-       disabled={isLoading}
-       >
+      <section className='panel inventory-panel'>
+        <div className='panel-toolbar'>
+          <h2>Current Inventory</h2>
 
-        {isLoading ? "Updating..." : "Advance One Day"}
-      </button>
+          <button
+          className='primary-button'
+          type='button'
+          onClick={advanceDay}
+          disabled={isLoading}
+          >
+            {isLoading ? "Updating..." : "Advance One Day"}
+          </button>
+        </div>
 
-      <AddItemForm onAddItem={handleAddItem} />
-      </div>
-  );  
+        <div className='table-scroll'>
+          <InventoryTable items={items} />
+        </div>
+      </section>
+
+      <section className='panel form-panel'>
+        <AddItemForm onAddItem={handleAddItem} />
+      </section>
+
+    </main>
+  );
+
 }
 
 export default App;
