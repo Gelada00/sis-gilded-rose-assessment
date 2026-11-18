@@ -7,7 +7,7 @@ The application implements the Gilded Rose inventory rules and allows users to m
 ## Tech Stack
 
 **Backend**
-- Java 17+
+- Java JDK 21
 - Spring Boot
 - Maven
 - JUnit 5
