@@ -20,8 +20,12 @@ public class InventoryService {
             throw new InvalidInventoryException("Item name must not be blank");
         }
 
+        if (item.quality() < 0) {
+            throw new InvalidInventoryException("Item quality must not be negative");
+        }
+
         if (item.name().equals("Sulfuras")) {
-            return item;
+            return new Item(item.name(), item.sellIn(), 80);
         }
 
         boolean expired = item.sellIn() <= 0;
